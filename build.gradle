@@ -1,0 +1,32 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+apply plugin: 'com.github.ben-manes.versions'
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.3.0'
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.14.0'
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+allprojects {
+    repositories {
+        jcenter()
+    }
+}
+// Define versions in a single place
+ext {
+    // App dependencies
+    // android support libraries
+    supportLibraryVersion = '25.2.0'
+    // butterknife
+    butterKnifeVersion = '8.5.1'
+    // logger
+    timberVersion = '4.5.1'
+
+    constraintLayoutVersion = '1.0.0-beta5'
+}
