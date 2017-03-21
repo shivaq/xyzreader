@@ -16,10 +16,25 @@
 -->
 
 <resources>
-    <color name="photo_placeholder">#ccc</color>
+    <color name="white">#FFFFFF</color>
+    <color name="grey">#cccccc</color>
+    <color name="grey_700">#646464</color>
+    <color name="black">#000000</color>
+    <color name="blue_grey_50">#ECEFF1</color>
+    <color name="blue_grey_200">#B0BEC5</color>
 
-    <color name="theme_primary">#04561A</color>
-    <color name="theme_primary_dark">#04561A</color>
-    <color name="theme_accent">#04561A</color>
-    <color name="ltgray">#ffe0e0e0</color>
+
+    <color name="colorPrimary">#00BCD4</color>
+    <color name="colorPrimaryDark">#0097A7</color>
+    <color name="colorPrimaryLight">#4DD0E1</color>
+    <color name="colorAccent">#D6D900</color>
+
+
+    <!--text colors-->
+    <color name="text_primary">#212121</color>
+    <color name="text_secondary">#727272</color>
+    <color name="text_article_title_main">@color/blue_grey_50</color>
+    <color name="text_article_author_main">@color/blue_grey_200</color>
+
+    <color name="photo_placeholder">@color/grey</color>
 </resources>

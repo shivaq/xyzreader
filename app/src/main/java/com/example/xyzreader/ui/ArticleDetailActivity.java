@@ -82,6 +82,7 @@ public class ArticleDetailActivity extends ActionBarActivity
         mUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                supportFinishAfterTransition();
                 onSupportNavigateUp();
             }
         });
@@ -100,6 +101,7 @@ public class ArticleDetailActivity extends ActionBarActivity
         }
 
         if (savedInstanceState == null) {
+            supportPostponeEnterTransition();
             if (getIntent() != null && getIntent().getData() != null) {
                 mStartId = ItemsContract.Items.getItemId(getIntent().getData());
                 mSelectedItemId = mStartId;
@@ -151,6 +153,8 @@ public class ArticleDetailActivity extends ActionBarActivity
         mUpButton.setTranslationY(Math.min(mSelectedItemUpButtonFloor - upButtonNormalBottom, 0));
     }
 
+
+    /************* PagerAdapter **********************/
     private class MyPagerAdapter extends FragmentStatePagerAdapter {
         public MyPagerAdapter(FragmentManager fm) {
             super(fm);

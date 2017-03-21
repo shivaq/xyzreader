@@ -4,8 +4,24 @@
     <dimen name="detail_body_text_size">22sp</dimen>
     <item name="detail_body_line_spacing_multiplier" format="float" type="fraction">1.25</item>
 
-    <dimen name="fab_elevation">2dp</dimen>
-    <dimen name="fab_press_translation_z">6dp</dimen>
-    <dimen name="fab_margin">24dp</dimen>
+    <!--fab-->
+    <dimen name="elevation_fab">6dp</dimen>
+    <dimen name="fab_press_translation_z">12dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+
+    <!--card-->
+    <dimen name="elevation_card_pressed">8dp</dimen>
+    <dimen name="elevation_card">2dp</dimen>
+    <!--bar-->
+    <dimen name="elevation_app_bar">4dp</dimen>
+    <dimen name="elevation_refresh">3dp</dimen>
+
+
+    <dimen name="key_line_1">8dp</dimen>
+    <dimen name="key_line_2">16dp</dimen>
+    <dimen name="indicator_start">160px</dimen>
+    <dimen name="indicator_end">260px</dimen>
+    <dimen name="appbar_header_height">200dp</dimen>
+
 
 </resources>
