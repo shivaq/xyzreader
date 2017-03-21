@@ -34,7 +34,6 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/scrim"/>
 
-            <!--TODO:タイトルも遷移アニメーションさせる-->
             <TextView
                 android:id="@+id/article_title"
                 android:transitionName="@string/article_title_transition_name"
