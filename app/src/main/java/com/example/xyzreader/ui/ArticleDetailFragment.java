@@ -152,7 +152,9 @@ public class ArticleDetailFragment extends Fragment implements
         mPhotoContainerView = mRootView.findViewById(R.id.coordinatar_layout);
         mTitleView = (TextView) mRootView.findViewById(R.id.article_title);
 
-        setTransitionName();
+        if(mTransitionAnimation){
+            setTransitionName();
+        }
 
         mStatusBarColorDrawable = new ColorDrawable(0);
 
@@ -256,6 +258,19 @@ public class ArticleDetailFragment extends Fragment implements
                     .load(mCursor.getString(ArticleLoader.Query.PHOTO_URL))
                     .into(mTarget);
 
+            if (mTransitionAnimation && mItemId == mStartId) {
+                ((ArticleDetailActivity) getActivity()).scheduleStartPostponedTransition(mPhotoView);
+//            mPhotoView.getViewTreeObserver().addOnPreDrawListener(
+//                    new ViewTreeObserver.OnPreDrawListener() {
+//                        @Override
+//                        public boolean onPreDraw() {
+//                            mPhotoView.getViewTreeObserver().removeOnPreDrawListener(this);
+//                            ActivityCompat.startPostponedEnterTransition(getActivity());
+//                            return true;
+//                        }
+//                    }
+//            );
+            }
         } else {
             mRootView.setVisibility(View.GONE);
             mTitleView.setText("N/A");
@@ -274,20 +289,7 @@ public class ArticleDetailFragment extends Fragment implements
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
 
 
-        Timber.d("ArticleDetailFragment:onLoadFinished: ");
-        if (mTransitionAnimation && mItemId == mStartId) {
-            ((ArticleDetailActivity) getActivity()).scheduleStartPostponedTransition(mPhotoView);
-//            mPhotoView.getViewTreeObserver().addOnPreDrawListener(
-//                    new ViewTreeObserver.OnPreDrawListener() {
-//                        @Override
-//                        public boolean onPreDraw() {
-//                            mPhotoView.getViewTreeObserver().removeOnPreDrawListener(this);
-//                            ActivityCompat.startPostponedEnterTransition(getActivity());
-//                            return true;
-//                        }
-//                    }
-//            );
-        }
+
 
         if (!isAdded()) {
             if (cursor != null) {
