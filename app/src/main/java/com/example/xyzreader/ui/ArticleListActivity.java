@@ -1,6 +1,5 @@
 package com.example.xyzreader.ui;
 
-import android.app.Activity;
 import android.app.LoaderManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -8,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.Loader;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -44,11 +44,12 @@ public class ArticleListActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String TAG = ArticleListActivity.class.getSimpleName();
-    
+
     private Toolbar mToolbar;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
     private boolean mHoldForTransition;
+    private int mPosition;
 
     @BindColor(R.color.colorPrimary)
     int colorPrimary;
@@ -65,8 +66,6 @@ public class ArticleListActivity extends AppCompatActivity implements
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
 
-        final View toolbarContainerView = findViewById(R.id.toolbar_container);
-
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
 
         int start = getResources().getDimensionPixelSize(R.dimen.indicator_start);
@@ -80,7 +79,7 @@ public class ArticleListActivity extends AppCompatActivity implements
         mHoldForTransition = getResources().getBoolean(R.bool.do_shared_transition);
 
         // Postpone transition before initLoader
-        if(mHoldForTransition){
+        if (mHoldForTransition) {
             Timber.d("ArticleListActivity:onCreate: supportPostponeEnterTransition");
             supportPostponeEnterTransition();
         }
@@ -141,9 +140,9 @@ public class ArticleListActivity extends AppCompatActivity implements
                     new ViewTreeObserver.OnPreDrawListener() {
                         @Override
                         public boolean onPreDraw() {
-                            if(mRecyclerView.getChildCount() > 0){
+                            if (mRecyclerView.getChildCount() > 0) {
                                 mRecyclerView.getViewTreeObserver().removeOnPreDrawListener(this);
-                                if(mHoldForTransition){
+                                if (mHoldForTransition) {
                                     Log.d(TAG, "onPreDraw: supportStartPostponedEnterTransition");
                                     supportStartPostponedEnterTransition();
                                 }
@@ -171,7 +170,6 @@ public class ArticleListActivity extends AppCompatActivity implements
     /****************** View Holder ***********************/
     private class Adapter extends RecyclerView.Adapter<ViewHolder> {
         private Cursor mCursor;
-        private Context mContext;
 
         public Adapter(Cursor cursor) {
             mCursor = cursor;
@@ -188,24 +186,49 @@ public class ArticleListActivity extends AppCompatActivity implements
             View view = getLayoutInflater().inflate(R.layout.list_item_article, parent, false);
             final ViewHolder vh = new ViewHolder(view);
 
-            mContext = view.getContext();
-
-            final ActivityOptionsCompat optionsCompat =
-                    ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) mContext,
-                            new Pair<View, String>(vh.thumbnailView,
-                                    getString(R.string.thumbnail_transition_name)),
-                            new Pair<View, String>(vh.titleView,
-                                    getString(R.string.article_title_transition_name)));
-
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Timber.d("Adapter:onClick: ");
-                    ActivityCompat.startActivity(mContext,
-                            new Intent(Intent.ACTION_VIEW,
-                            ItemsContract.Items.buildItemUri(
-                                    getItemId(vh.getAdapterPosition()))),
-                            optionsCompat.toBundle());
+
+                    // Get the clicked position
+                    int position = vh.getAdapterPosition();
+
+                    // これは、受けての方で名前をつける方法？
+                    // 送り手の方でも使えますよね？
+                    // Make the name of sharedTransitionElements unique
+                    String photoTransitionNameWithPosition =
+                            getString(R.string.photo_transition_name) + position;
+                    String titleTransitionNameWithPosition =
+                            getString(R.string.article_title_transition_name) + position;
+
+                    ViewCompat.setTransitionName(vh.photoView, photoTransitionNameWithPosition);
+                    ViewCompat.setTransitionName(vh.titleView, titleTransitionNameWithPosition);
+
+
+                    Timber.d("Adapter:onClick: photoTransitionNameWithPosition is %s", photoTransitionNameWithPosition);
+                    Timber.d("Adapter:onClick: titleTransitionNameWithPosition is %s", titleTransitionNameWithPosition);
+                    // pair of view and unique transition name
+                    Pair photoTransition = new Pair<View, String>(vh.photoView,
+                            photoTransitionNameWithPosition);
+
+                    Pair titleTransition = new Pair<View, String>(vh.titleView,
+                            titleTransitionNameWithPosition);
+
+                    // この名前が、トランジション時に使われるんやで、ということを
+                    // Intent にも伝えるための処理？
+                    // 送るのは View と 名前 とのペア
+                    ActivityOptionsCompat optionsCompat =
+                            ActivityOptionsCompat.makeSceneTransitionAnimation(
+                                    ArticleListActivity.this, photoTransition, titleTransition);
+
+                    Uri uri = ItemsContract.Items.buildItemUri(
+                            getItemId(vh.getAdapterPosition()));
+
+                    Timber.d("Adapter:onClick: uri is %s", uri);
+
+                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                    ActivityCompat.startActivity(
+                            ArticleListActivity.this, intent, optionsCompat.toBundle());
                 }
             });
             return vh;
@@ -225,13 +248,11 @@ public class ArticleListActivity extends AppCompatActivity implements
                             + " by "
                             + mCursor.getString(ArticleLoader.Query.AUTHOR));
 
-            holder.thumbnailView.setImageUrl(
+            holder.photoView.setImageUrl(
                     mCursor.getString(ArticleLoader.Query.THUMB_URL),
                     ImageLoaderHelper.getInstance(ArticleListActivity.this).getImageLoader());
 
-            holder.thumbnailView.setAspectRatio(mCursor.getFloat(ArticleLoader.Query.ASPECT_RATIO));
-            ViewCompat.setTransitionName(holder.thumbnailView, "thumbnailView" + position);
-            ViewCompat.setTransitionName(holder.titleView, "titleView" + position);
+            holder.photoView.setAspectRatio(mCursor.getFloat(ArticleLoader.Query.ASPECT_RATIO));
         }
 
         @Override
@@ -241,13 +262,13 @@ public class ArticleListActivity extends AppCompatActivity implements
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public DynamicHeightNetworkImageView thumbnailView;
+        public DynamicHeightNetworkImageView photoView;
         public TextView titleView;
         public TextView subtitleView;
 
         public ViewHolder(View view) {
             super(view);
-            thumbnailView = (DynamicHeightNetworkImageView) view.findViewById(R.id.thumbnail);
+            photoView = (DynamicHeightNetworkImageView) view.findViewById(R.id.photo);
             titleView = (TextView) view.findViewById(R.id.article_title);
             subtitleView = (TextView) view.findViewById(R.id.article_byline);
         }

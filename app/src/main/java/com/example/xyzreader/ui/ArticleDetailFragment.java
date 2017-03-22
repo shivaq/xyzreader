@@ -11,6 +11,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.ShareCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.graphics.Palette;
 import android.text.Html;
 import android.text.format.DateUtils;
@@ -27,6 +28,8 @@ import com.android.volley.toolbox.ImageLoader;
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
 
+import timber.log.Timber;
+
 /**
  * A fragment representing a single Article detail screen. This fragment is
  * either contained in a {@link ArticleListActivity} in two-pane mode (on
@@ -37,6 +40,7 @@ public class ArticleDetailFragment extends Fragment implements
     private static final String TAG = "ArticleDetailFragment";
 
     public static final String ARG_ITEM_ID = "item_id";
+    public static final String ARG_ITEM_POSITION = "item_posision";
     private static final float PARALLAX_FACTOR = 1.25f;
 
     private Cursor mCursor;
@@ -50,10 +54,12 @@ public class ArticleDetailFragment extends Fragment implements
     private int mTopInset;
     private View mPhotoContainerView;
     private ImageView mPhotoView;
+    private TextView mTitleView;
     private int mScrollY;
     private boolean mIsCard = false;
     private int mStatusBarFullOpacityBottom;
 
+    private int mPosition;
     private boolean mTransitionAnimation;
 
     /**
@@ -63,9 +69,11 @@ public class ArticleDetailFragment extends Fragment implements
     public ArticleDetailFragment() {
     }
 
-    public static ArticleDetailFragment newInstance(long itemId) {
+    // Called from MyPager Adapter
+    public static ArticleDetailFragment newInstance(long itemId, int position) {
         Bundle arguments = new Bundle();
         arguments.putLong(ARG_ITEM_ID, itemId);
+        arguments.putInt(ARG_ITEM_POSITION, position);
         ArticleDetailFragment fragment = new ArticleDetailFragment();
         fragment.setArguments(arguments);
         return fragment;
@@ -75,9 +83,17 @@ public class ArticleDetailFragment extends Fragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Get _ID at the cursor position and the position of the item
+        // from MyPager Adapter
         if (getArguments().containsKey(ARG_ITEM_ID)) {
             mItemId = getArguments().getLong(ARG_ITEM_ID);
         }
+        // newInstance() is called from viewPager several times but
+        // the position is unique for each fragment instances.
+        if (getArguments().containsKey(ARG_ITEM_POSITION)) {
+            mPosition = getArguments().getInt(ARG_ITEM_POSITION);
+        }
+        Timber.d("ArticleDetailFragment:onCreate: mPosition is %s", mPosition);
 
         // Toggle card mode
         mIsCard = getResources().getBoolean(R.bool.detail_is_card);
@@ -101,14 +117,34 @@ public class ArticleDetailFragment extends Fragment implements
         getLoaderManager().initLoader(0, null, this);
     }
 
+    private void setTransitionName() {
+
+        String photoTransitionNameWithPosition =
+                getString(R.string.photo_transition_name) + mPosition;
+        String titleTransitionNameWithPosition =
+                getString(R.string.article_title_transition_name) + mPosition;
+
+        Timber.d("ArticleDetailFragment:setTransitionName: photoTransitionNameWithPosition is %s", photoTransitionNameWithPosition);
+        Timber.d("ArticleDetailFragment:setTransitionName: titleTransitionNameWithPosition is %s", titleTransitionNameWithPosition);
+        if (mPhotoView != null) {
+            ViewCompat.setTransitionName(mPhotoView, photoTransitionNameWithPosition);
+        }
+        if (mTitleView != null) {
+            ViewCompat.setTransitionName(mTitleView, titleTransitionNameWithPosition);
+        }
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
-        mTransitionAnimation = getResources().getBoolean(R.bool.do_shared_transition);
+                             Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.fragment_article_detail_collapsing, container, false);
+        mTransitionAnimation = getResources().getBoolean(R.bool.do_shared_transition);
 
         mPhotoView = (ImageView) mRootView.findViewById(R.id.photo);
         mPhotoContainerView = mRootView.findViewById(R.id.coordinatar_layout);
+        mTitleView = (TextView) mRootView.findViewById(R.id.article_title);
+
+        setTransitionName();
 
         mStatusBarColorDrawable = new ColorDrawable(0);
 
@@ -160,11 +196,8 @@ public class ArticleDetailFragment extends Fragment implements
             return;
         }
 
-        TextView titleView = (TextView) mRootView.findViewById(R.id.article_title);
         TextView bylineView = (TextView) mRootView.findViewById(R.id.article_byline);
-                bylineView.setMovementMethod(new LinkMovementMethod());
-
-
+        bylineView.setMovementMethod(new LinkMovementMethod());
 
 
         TextView bodyView = (TextView) mRootView.findViewById(R.id.article_body);
@@ -174,7 +207,7 @@ public class ArticleDetailFragment extends Fragment implements
             mRootView.setAlpha(0);
             mRootView.setVisibility(View.VISIBLE);
             mRootView.animate().alpha(1);
-            titleView.setText(mCursor.getString(ArticleLoader.Query.TITLE));
+            mTitleView.setText(mCursor.getString(ArticleLoader.Query.TITLE));
 
             bylineView.setText(Html.fromHtml(
                     DateUtils.getRelativeTimeSpanString(
@@ -208,8 +241,8 @@ public class ArticleDetailFragment extends Fragment implements
                     });
         } else {
             mRootView.setVisibility(View.GONE);
-            titleView.setText("N/A");
-            bylineView.setText("N/A" );
+            mTitleView.setText("N/A");
+            bylineView.setText("N/A");
             bodyView.setText("N/A");
         }
     }
@@ -228,7 +261,8 @@ public class ArticleDetailFragment extends Fragment implements
             return;
         }
 
-        if(mTransitionAnimation){
+        if (mTransitionAnimation) {
+            Timber.d("ArticleDetailFragment:onLoadFinished: mPosition is %s", mPosition);
             getActivityCast().supportStartPostponedEnterTransition();
         }
         mCursor = cursor;

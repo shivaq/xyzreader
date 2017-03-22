@@ -20,6 +20,8 @@ import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.data.ItemsContract;
 
+import timber.log.Timber;
+
 /**
  * An activity representing a single Article detail screen, letting you swipe between articles.
  */
@@ -50,6 +52,7 @@ public class ArticleDetailActivity extends ActionBarActivity
 
         getLoaderManager().initLoader(0, null, this);
 
+        // Set Adapter for ViewPager
         mPagerAdapter = new MyPagerAdapter(getFragmentManager());
         mPager = (ViewPager) findViewById(R.id.pager);
         mPager.setAdapter(mPagerAdapter);
@@ -59,6 +62,7 @@ public class ArticleDetailActivity extends ActionBarActivity
 
         mPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
+            // While page is swiping, do this
             public void onPageScrollStateChanged(int state) {
                 super.onPageScrollStateChanged(state);
                 mUpButton.animate()
@@ -66,11 +70,13 @@ public class ArticleDetailActivity extends ActionBarActivity
                         .setDuration(300);
             }
 
+            // When page swipe is done, do this
             @Override
             public void onPageSelected(int position) {
                 if (mCursor != null) {
                     mCursor.moveToPosition(position);
                 }
+                // Get itemId from scrolled page
                 mSelectedItemId = mCursor.getLong(ArticleLoader.Query._ID);
                 updateUpButtonPosition();
             }
@@ -79,6 +85,7 @@ public class ArticleDetailActivity extends ActionBarActivity
         mUpButtonContainer = findViewById(R.id.up_container);
 
         mUpButton = findViewById(R.id.action_up);
+        // Add upbutton back transition and up function
         mUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -103,7 +110,9 @@ public class ArticleDetailActivity extends ActionBarActivity
         if (savedInstanceState == null) {
             supportPostponeEnterTransition();
             if (getIntent() != null && getIntent().getData() != null) {
+                // Get itemId from intent
                 mStartId = ItemsContract.Items.getItemId(getIntent().getData());
+                // mSelectedItemId might be updated when the page is swiped
                 mSelectedItemId = mStartId;
             }
         }
@@ -119,10 +128,11 @@ public class ArticleDetailActivity extends ActionBarActivity
         mCursor = cursor;
         mPagerAdapter.notifyDataSetChanged();
 
-        // Select the start ID
+        // mStartId was retrieved from intent
         if (mStartId > 0) {
             mCursor.moveToFirst();
             // TODO: optimize
+            // loop cursor row from first until cursor position reached to last row
             while (!mCursor.isAfterLast()) {
                 if (mCursor.getLong(ArticleLoader.Query._ID) == mStartId) {
                     final int position = mCursor.getPosition();
@@ -172,8 +182,12 @@ public class ArticleDetailActivity extends ActionBarActivity
 
         @Override
         public Fragment getItem(int position) {
+            // This position is the position of the viewPager
+            // and is called every time page swiped
             mCursor.moveToPosition(position);
-            return ArticleDetailFragment.newInstance(mCursor.getLong(ArticleLoader.Query._ID));
+            Timber.d("MyPagerAdapter:getItem: position %s", position);
+            // Pass _ID at the cursor position and the position of the item
+            return ArticleDetailFragment.newInstance(mCursor.getLong(ArticleLoader.Query._ID), position);
         }
 
         @Override
