@@ -32,6 +32,7 @@ import com.squareup.picasso.Picasso;
 
 import butterknife.BindColor;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 import static com.example.xyzreader.R.id.photo;
 
@@ -106,11 +107,13 @@ public class ArticleListActivity extends AppCompatActivity implements
         public void onReceive(Context context, Intent intent) {
             if (UpdaterService.BROADCAST_ACTION_STATE_CHANGE.equals(intent.getAction())) {
                 mIsRefreshing = intent.getBooleanExtra(UpdaterService.EXTRA_REFRESHING, false);
+                Timber.d("ArticleListActivity:onReceive: mIsRefreshing is %s", mIsRefreshing);
                 updateRefreshingUI();
             }
         }
     };
 
+    // TODO:stop refreshing
     private void updateRefreshingUI() {
         mSwipeRefreshLayout.setRefreshing(mIsRefreshing);
     }
@@ -163,6 +166,7 @@ public class ArticleListActivity extends AppCompatActivity implements
 
                     Uri uri = ItemsContract.Items.buildItemUri(
                             getItemId(vh.getAdapterPosition()));
+
                     Intent intent = new Intent(Intent.ACTION_VIEW, uri);
 
                     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
