@@ -35,7 +35,6 @@
                     <TextView
                         android:id="@+id/article_title"
                         style="@style/article_title"
-                        android:transitionName="@string/article_title_transition_name"
                         tools:text="Miss Anders! I didn’t recognize you with your clothes on."/>
 
                     <TextView
@@ -53,6 +52,7 @@
                     android:lineSpacingMultiplier="@fraction/detail_body_line_spacing_multiplier"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                     android:textColor="@color/text_primary"
+                    android:paddingBottom="80dp"
                     android:textColorLink="@color/colorPrimary"
                     tools:text="You cannot say 'no' to the people you love, not often. That's the secret. And then when you do, it has to sound like a 'yes'. Or you have to make them say 'no.' You have to take time and trouble."/>
 
