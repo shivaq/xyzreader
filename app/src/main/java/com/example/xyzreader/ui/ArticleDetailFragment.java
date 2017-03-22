@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.graphics.Palette;
@@ -20,6 +21,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -245,6 +247,19 @@ public class ArticleDetailFragment extends Fragment implements
             bylineView.setText("N/A");
             bodyView.setText("N/A");
         }
+
+        if (mTransitionAnimation) {
+            mRootView.getViewTreeObserver().addOnPreDrawListener(
+                    new ViewTreeObserver.OnPreDrawListener() {
+                        @Override
+                        public boolean onPreDraw() {
+                            mRootView.getViewTreeObserver().removeOnPreDrawListener(this);
+                            ActivityCompat.startPostponedEnterTransition(getActivity());
+                            return true;
+                        }
+                    }
+            );
+        }
     }
 
     @Override
@@ -261,10 +276,6 @@ public class ArticleDetailFragment extends Fragment implements
             return;
         }
 
-        if (mTransitionAnimation) {
-            Timber.d("ArticleDetailFragment:onLoadFinished: mPosition is %s", mPosition);
-            getActivityCast().supportStartPostponedEnterTransition();
-        }
         mCursor = cursor;
         if (mCursor != null && !mCursor.moveToFirst()) {
             Log.e(TAG, "Error reading item detail cursor");

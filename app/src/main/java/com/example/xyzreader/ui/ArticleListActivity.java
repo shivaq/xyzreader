@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -19,10 +20,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
 import com.example.xyzreader.R;
@@ -32,7 +31,6 @@ import com.example.xyzreader.data.UpdaterService;
 
 import butterknife.BindColor;
 import butterknife.ButterKnife;
-import timber.log.Timber;
 
 /**
  * An activity representing a list of Articles. This activity has different presentations for
@@ -71,18 +69,12 @@ public class ArticleListActivity extends AppCompatActivity implements
         int start = getResources().getDimensionPixelSize(R.dimen.indicator_start);
         int end = getResources().getDimensionPixelSize(R.dimen.indicator_end);
         mSwipeRefreshLayout.setProgressViewOffset(true, start, end);
-
         mSwipeRefreshLayout.setColorSchemeColors(colorPrimary, colorPrimaryLight, colorAccent);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
         mHoldForTransition = getResources().getBoolean(R.bool.do_shared_transition);
 
-        // Postpone transition before initLoader
-        if (mHoldForTransition) {
-            Timber.d("ArticleListActivity:onCreate: supportPostponeEnterTransition");
-            supportPostponeEnterTransition();
-        }
         getLoaderManager().initLoader(0, null, this);
 
         if (savedInstanceState == null) {
@@ -133,26 +125,6 @@ public class ArticleListActivity extends AppCompatActivity implements
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         final Adapter adapter = new Adapter(cursor);
-        if (cursor.getCount() == 0) {
-            supportStartPostponedEnterTransition();
-        } else {
-            mRecyclerView.getViewTreeObserver().addOnPreDrawListener(
-                    new ViewTreeObserver.OnPreDrawListener() {
-                        @Override
-                        public boolean onPreDraw() {
-                            if (mRecyclerView.getChildCount() > 0) {
-                                mRecyclerView.getViewTreeObserver().removeOnPreDrawListener(this);
-                                if (mHoldForTransition) {
-                                    Log.d(TAG, "onPreDraw: supportStartPostponedEnterTransition");
-                                    supportStartPostponedEnterTransition();
-                                }
-                                return true;
-                            }
-                            return false;
-                        }
-                    }
-            );
-        }
         adapter.setHasStableIds(true);
         mRecyclerView.setAdapter(adapter);
         int columnCount = getResources().getInteger(R.integer.list_column_count);
@@ -190,45 +162,39 @@ public class ArticleListActivity extends AppCompatActivity implements
                 @Override
                 public void onClick(View view) {
 
-                    // Get the clicked position
-                    int position = vh.getAdapterPosition();
-
-                    // これは、受けての方で名前をつける方法？
-                    // 送り手の方でも使えますよね？
-                    // Make the name of sharedTransitionElements unique
-                    String photoTransitionNameWithPosition =
-                            getString(R.string.photo_transition_name) + position;
-                    String titleTransitionNameWithPosition =
-                            getString(R.string.article_title_transition_name) + position;
-
-                    ViewCompat.setTransitionName(vh.photoView, photoTransitionNameWithPosition);
-                    ViewCompat.setTransitionName(vh.titleView, titleTransitionNameWithPosition);
-
-
-                    Timber.d("Adapter:onClick: photoTransitionNameWithPosition is %s", photoTransitionNameWithPosition);
-                    Timber.d("Adapter:onClick: titleTransitionNameWithPosition is %s", titleTransitionNameWithPosition);
-                    // pair of view and unique transition name
-                    Pair photoTransition = new Pair<View, String>(vh.photoView,
-                            photoTransitionNameWithPosition);
-
-                    Pair titleTransition = new Pair<View, String>(vh.titleView,
-                            titleTransitionNameWithPosition);
-
-                    // この名前が、トランジション時に使われるんやで、ということを
-                    // Intent にも伝えるための処理？
-                    // 送るのは View と 名前 とのペア
-                    ActivityOptionsCompat optionsCompat =
-                            ActivityOptionsCompat.makeSceneTransitionAnimation(
-                                    ArticleListActivity.this, photoTransition, titleTransition);
-
                     Uri uri = ItemsContract.Items.buildItemUri(
                             getItemId(vh.getAdapterPosition()));
-
-                    Timber.d("Adapter:onClick: uri is %s", uri);
-
                     Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                    ActivityCompat.startActivity(
-                            ArticleListActivity.this, intent, optionsCompat.toBundle());
+
+                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+                        // Get the clicked position
+                        int position = vh.getAdapterPosition();
+
+                        // Make the name of sharedTransitionElements unique
+                        String photoTransitionNameWithPosition =
+                                getString(R.string.photo_transition_name) + position;
+                        String titleTransitionNameWithPosition =
+                                getString(R.string.article_title_transition_name) + position;
+
+                        ViewCompat.setTransitionName(vh.photoView, photoTransitionNameWithPosition);
+                        ViewCompat.setTransitionName(vh.titleView, titleTransitionNameWithPosition);
+
+                        // pair of view and unique transition name
+                        Pair photoTransition = new Pair<View, String>(vh.photoView,
+                                photoTransitionNameWithPosition);
+
+                        Pair titleTransition = new Pair<View, String>(vh.titleView,
+                                titleTransitionNameWithPosition);
+
+                        ActivityOptionsCompat optionsCompat =
+                                ActivityOptionsCompat.makeSceneTransitionAnimation(
+                                        ArticleListActivity.this, photoTransition, titleTransition);
+
+
+                        ActivityCompat.startActivity(
+                                ArticleListActivity.this, intent, optionsCompat.toBundle());
+                    }
+                    startActivity(intent);
                 }
             });
             return vh;
