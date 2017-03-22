@@ -196,8 +196,9 @@ public class ArticleListActivity extends AppCompatActivity implements
 
                         ActivityCompat.startActivity(
                                 ArticleListActivity.this, intent, optionsCompat.toBundle());
+                    } else {
+                        startActivity(intent);
                     }
-                    startActivity(intent);
                 }
             });
             return vh;
