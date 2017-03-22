@@ -42,6 +42,7 @@ public class ArticleDetailFragment extends Fragment implements
 
     public static final String ARG_ITEM_ID = "item_id";
     public static final String ARG_ITEM_POSITION = "item_posision";
+    public static final String ARG_VISIBLE_FRAGMENT_ID = "fragment_is_visible";
     private static final float PARALLAX_FACTOR = 1.25f;
 
     private Cursor mCursor;
@@ -64,6 +65,7 @@ public class ArticleDetailFragment extends Fragment implements
     private boolean mTransitionAnimation;
     // In order to prevent GC, the target must be here.
     private Target mTarget;
+    private long mStartId;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -73,10 +75,11 @@ public class ArticleDetailFragment extends Fragment implements
     }
 
     // Called from MyPager Adapter
-    public static ArticleDetailFragment newInstance(long itemId, int position) {
+    public static ArticleDetailFragment newInstance(long itemId, int position, long startId) {
         Bundle arguments = new Bundle();
         arguments.putLong(ARG_ITEM_ID, itemId);
         arguments.putInt(ARG_ITEM_POSITION, position);
+        arguments.putLong(ARG_VISIBLE_FRAGMENT_ID, startId);
         ArticleDetailFragment fragment = new ArticleDetailFragment();
         fragment.setArguments(arguments);
         return fragment;
@@ -96,7 +99,11 @@ public class ArticleDetailFragment extends Fragment implements
         if (getArguments().containsKey(ARG_ITEM_POSITION)) {
             mPosition = getArguments().getInt(ARG_ITEM_POSITION);
         }
+        if(getArguments().containsKey(ARG_VISIBLE_FRAGMENT_ID)){
+            mStartId = getArguments().getLong(ARG_VISIBLE_FRAGMENT_ID);
+        }
         Timber.d("ArticleDetailFragment:onCreate: mPosition is %s", mPosition);
+        Timber.d("ArticleDetailFragment:onCreate: mItemId is %s", mItemId);
 
         // Toggle card mode
         mIsCard = getResources().getBoolean(R.bool.detail_is_card);
@@ -127,8 +134,6 @@ public class ArticleDetailFragment extends Fragment implements
         String titleTransitionNameWithPosition =
                 getString(R.string.article_title_transition_name) + mPosition;
 
-        Timber.d("ArticleDetailFragment:setTransitionName: photoTransitionNameWithPosition is %s", photoTransitionNameWithPosition);
-        Timber.d("ArticleDetailFragment:setTransitionName: titleTransitionNameWithPosition is %s", titleTransitionNameWithPosition);
         if (mPhotoView != null) {
             ViewCompat.setTransitionName(mPhotoView, photoTransitionNameWithPosition);
         }
@@ -211,6 +216,7 @@ public class ArticleDetailFragment extends Fragment implements
             mRootView.animate().alpha(1);
             mTitleView.setText(mCursor.getString(ArticleLoader.Query.TITLE));
 
+            Timber.d("ArticleDetailFragment:bindViews: title is %s", mCursor.getString(ArticleLoader.Query.TITLE));
             bylineView.setText(Html.fromHtml(
                     DateUtils.getRelativeTimeSpanString(
                             mCursor.getLong(ArticleLoader.Query.PUBLISHED_DATE),
@@ -268,9 +274,9 @@ public class ArticleDetailFragment extends Fragment implements
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
 
 
-
-        if (mTransitionAnimation) {
-            ((ArticleDetailActivity)getActivity()).scheduleStartPostponedTransition(mPhotoView);
+        Timber.d("ArticleDetailFragment:onLoadFinished: ");
+        if (mTransitionAnimation && mItemId == mStartId) {
+            ((ArticleDetailActivity) getActivity()).scheduleStartPostponedTransition(mPhotoView);
 //            mPhotoView.getViewTreeObserver().addOnPreDrawListener(
 //                    new ViewTreeObserver.OnPreDrawListener() {
 //                        @Override

@@ -46,6 +46,7 @@ public class ArticleDetailActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Timber.d("ArticleDetailActivity:onCreate: ");
         ActivityCompat.postponeEnterTransition(this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().getDecorView().setSystemUiVisibility(
@@ -158,6 +159,7 @@ public class ArticleDetailActivity extends AppCompatActivity
     }
 
     public void scheduleStartPostponedTransition(final View sharedElement) {
+        Timber.d("ArticleDetailActivity:scheduleStartPostponedTransition: ");
         sharedElement.getViewTreeObserver().addOnPreDrawListener(
                 new ViewTreeObserver.OnPreDrawListener() {
                     @Override
@@ -209,7 +211,10 @@ public class ArticleDetailActivity extends AppCompatActivity
             mCursor.moveToPosition(position);
             Timber.d("MyPagerAdapter:getItem: position %s", position);
             // Pass _ID at the cursor position and the position of the item
-            return ArticleDetailFragment.newInstance(mCursor.getLong(ArticleLoader.Query._ID), position);
+            return ArticleDetailFragment.newInstance(
+                    mCursor.getLong(ArticleLoader.Query._ID),
+                    position,
+                    mStartId);
         }
 
         @Override

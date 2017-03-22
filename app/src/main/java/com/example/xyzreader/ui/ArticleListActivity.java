@@ -49,8 +49,6 @@ public class ArticleListActivity extends AppCompatActivity implements
     private Toolbar mToolbar;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
-    private boolean mHoldForTransition;
-    private int mPosition;
 
     @BindColor(R.color.colorPrimary)
     int colorPrimary;
@@ -75,8 +73,6 @@ public class ArticleListActivity extends AppCompatActivity implements
         mSwipeRefreshLayout.setColorSchemeColors(colorPrimary, colorPrimaryLight, colorAccent);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-
-        mHoldForTransition = getResources().getBoolean(R.bool.do_shared_transition);
 
         getLoaderManager().initLoader(0, null, this);
 
