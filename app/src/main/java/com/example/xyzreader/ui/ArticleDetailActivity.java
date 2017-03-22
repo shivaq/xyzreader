@@ -165,8 +165,7 @@ public class ArticleDetailActivity extends AppCompatActivity
         mPagerAdapter.notifyDataSetChanged();
     }
 
-    public void scheduleStartPostponedTransition(final View sharedElement) {
-        Timber.d("ArticleDetailActivity:scheduleStartPostponedTransition: ");
+    public void startPostponedTransition(final View sharedElement) {
         sharedElement.getViewTreeObserver().addOnPreDrawListener(
                 new ViewTreeObserver.OnPreDrawListener() {
                     @Override
