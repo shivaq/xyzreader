@@ -11,7 +11,6 @@ import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.graphics.Palette;
@@ -22,7 +21,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -204,7 +202,6 @@ public class ArticleDetailFragment extends Fragment implements
         TextView bylineView = (TextView) mRootView.findViewById(R.id.article_byline);
         bylineView.setMovementMethod(new LinkMovementMethod());
 
-
         TextView bodyView = (TextView) mRootView.findViewById(R.id.article_body);
         bodyView.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "Rosario-Regular.ttf"));
 
@@ -260,18 +257,6 @@ public class ArticleDetailFragment extends Fragment implements
             bodyView.setText("N/A");
         }
 
-        if (mTransitionAnimation) {
-            mRootView.getViewTreeObserver().addOnPreDrawListener(
-                    new ViewTreeObserver.OnPreDrawListener() {
-                        @Override
-                        public boolean onPreDraw() {
-                            mRootView.getViewTreeObserver().removeOnPreDrawListener(this);
-                            ActivityCompat.startPostponedEnterTransition(getActivity());
-                            return true;
-                        }
-                    }
-            );
-        }
     }
 
     @Override
@@ -281,6 +266,23 @@ public class ArticleDetailFragment extends Fragment implements
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+
+
+
+        if (mTransitionAnimation) {
+            ((ArticleDetailActivity)getActivity()).scheduleStartPostponedTransition(mPhotoView);
+//            mPhotoView.getViewTreeObserver().addOnPreDrawListener(
+//                    new ViewTreeObserver.OnPreDrawListener() {
+//                        @Override
+//                        public boolean onPreDraw() {
+//                            mPhotoView.getViewTreeObserver().removeOnPreDrawListener(this);
+//                            ActivityCompat.startPostponedEnterTransition(getActivity());
+//                            return true;
+//                        }
+//                    }
+//            );
+        }
+
         if (!isAdded()) {
             if (cursor != null) {
                 cursor.close();
