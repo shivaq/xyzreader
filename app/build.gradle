@@ -39,6 +39,7 @@ dependencies {
     // constraint layout
     compile "com.android.support.constraint:constraint-layout:$rootProject.constraintLayoutVersion"
 
+    compile "com.squareup.picasso:picasso:$rootProject.picassoVersion"
     compile 'com.squareup.okhttp3:okhttp:3.6.0'
     compile files('libs/volley.jar')
 }

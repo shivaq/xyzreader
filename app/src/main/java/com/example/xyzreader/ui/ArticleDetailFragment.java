@@ -9,7 +9,9 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.graphics.Palette;
@@ -20,13 +22,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageLoader;
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import timber.log.Timber;
 
@@ -61,6 +64,8 @@ public class ArticleDetailFragment extends Fragment implements
 
     private int mPosition;
     private boolean mTransitionAnimation;
+    // In order to prevent GC, the target must be here.
+    private Target mTarget;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -219,31 +224,53 @@ public class ArticleDetailFragment extends Fragment implements
                             + "</font>"));
             bodyView.setText(Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY)));
 
-            ImageLoaderHelper.getInstance(getActivity()).getImageLoader()
-                    .get(mCursor.getString(ArticleLoader.Query.PHOTO_URL), new ImageLoader.ImageListener() {
-                        @Override
-                        public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {
-                            Bitmap bitmap = imageContainer.getBitmap();
-                            if (bitmap != null) {
-                                Palette p = Palette.generate(bitmap, 12);
-                                mMutedColor = p.getDarkMutedColor(0xFF333333);
-                                mPhotoView.setImageBitmap(imageContainer.getBitmap());
-                                mRootView.findViewById(R.id.meta_bar)
-                                        .setBackgroundColor(mMutedColor);
-                                updateStatusBar();
-                            }
-                        }
+            mTarget = new Target() {
+                @Override
+                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
 
-                        @Override
-                        public void onErrorResponse(VolleyError volleyError) {
+                    if (bitmap != null) {
+                        Palette p = Palette.generate(bitmap, 12);
+                        mMutedColor = p.getDarkMutedColor(0xFF333333);
+                        mPhotoView.setImageBitmap(bitmap);
+                        mRootView.findViewById(R.id.meta_bar)
+                                .setBackgroundColor(mMutedColor);
+                        updateStatusBar();
+                    }
+                }
 
-                        }
-                    });
+                @Override
+                public void onBitmapFailed(Drawable errorDrawable) {
+
+                }
+
+                @Override
+                public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                }
+            };
+
+            Picasso.with(getActivity())
+                    .load(mCursor.getString(ArticleLoader.Query.PHOTO_URL))
+                    .into(mTarget);
+
         } else {
             mRootView.setVisibility(View.GONE);
             mTitleView.setText("N/A");
             bylineView.setText("N/A");
             bodyView.setText("N/A");
+        }
+
+        if (mTransitionAnimation) {
+            mRootView.getViewTreeObserver().addOnPreDrawListener(
+                    new ViewTreeObserver.OnPreDrawListener() {
+                        @Override
+                        public boolean onPreDraw() {
+                            mRootView.getViewTreeObserver().removeOnPreDrawListener(this);
+                            ActivityCompat.startPostponedEnterTransition(getActivity());
+                            return true;
+                        }
+                    }
+            );
         }
     }
 
@@ -261,10 +288,6 @@ public class ArticleDetailFragment extends Fragment implements
             return;
         }
 
-        if (mTransitionAnimation) {
-            Timber.d("ArticleDetailFragment:onLoadFinished: mPosition is %s", mPosition);
-            getActivityCast().supportStartPostponedEnterTransition();
-        }
         mCursor = cursor;
         if (mCursor != null && !mCursor.moveToFirst()) {
             Log.e(TAG, "Error reading item detail cursor");

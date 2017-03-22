@@ -29,4 +29,5 @@ ext {
     timberVersion = '4.5.1'
 
     constraintLayoutVersion = '1.0.0-beta5'
+    picassoVersion = '2.5.2'
 }

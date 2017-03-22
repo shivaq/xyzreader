@@ -9,6 +9,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v13.app.FragmentStatePagerAdapter;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.TypedValue;
@@ -82,6 +83,7 @@ public class ArticleDetailActivity extends ActionBarActivity
             }
         });
 
+        // Implement up button manually
         mUpButtonContainer = findViewById(R.id.up_container);
 
         mUpButton = findViewById(R.id.action_up);
@@ -108,7 +110,9 @@ public class ArticleDetailActivity extends ActionBarActivity
         }
 
         if (savedInstanceState == null) {
-            supportPostponeEnterTransition();
+            // When the detailActivity is created, stop and wait enter transition.
+            // Wait until all data to be display is fetched.
+            ActivityCompat.postponeEnterTransition(this);
             if (getIntent() != null && getIntent().getData() != null) {
                 // Get itemId from intent
                 mStartId = ItemsContract.Items.getItemId(getIntent().getData());
@@ -166,13 +170,16 @@ public class ArticleDetailActivity extends ActionBarActivity
 
     /************* PagerAdapter **********************/
     private class MyPagerAdapter extends FragmentStatePagerAdapter {
+
+        // ViewPager loads visible fragment and both sides of off-screen fragments
         public MyPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
         @Override
         public void setPrimaryItem(ViewGroup container, int position, Object object) {
-            super.setPrimaryItem(container, position, object);
+                        super.setPrimaryItem(container, position, object);
+            // Get reference to current visible fragment.
             ArticleDetailFragment fragment = (ArticleDetailFragment) object;
             if (fragment != null) {
                 mSelectedItemUpButtonFloor = fragment.getUpButtonFloor();
