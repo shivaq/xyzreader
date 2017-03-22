@@ -168,7 +168,6 @@ public class ArticleDetailFragment extends Fragment implements
             }
         });
 
-        bindViews();
         updateStatusBar();
         return mRootView;
     }
@@ -259,17 +258,7 @@ public class ArticleDetailFragment extends Fragment implements
                     .into(mTarget);
 
             if (mTransitionAnimation && mItemId == mStartId) {
-                ((ArticleDetailActivity) getActivity()).scheduleStartPostponedTransition(mPhotoView);
-//            mPhotoView.getViewTreeObserver().addOnPreDrawListener(
-//                    new ViewTreeObserver.OnPreDrawListener() {
-//                        @Override
-//                        public boolean onPreDraw() {
-//                            mPhotoView.getViewTreeObserver().removeOnPreDrawListener(this);
-//                            ActivityCompat.startPostponedEnterTransition(getActivity());
-//                            return true;
-//                        }
-//                    }
-//            );
+                ((ArticleDetailActivity) getActivity()).startPostponedTransition(mPhotoView);
             }
         } else {
             mRootView.setVisibility(View.GONE);
