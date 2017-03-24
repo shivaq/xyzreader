@@ -32,7 +32,6 @@ import com.squareup.picasso.Picasso;
 
 import butterknife.BindColor;
 import butterknife.ButterKnife;
-import timber.log.Timber;
 
 import static com.example.xyzreader.R.id.photo;
 
@@ -43,7 +42,7 @@ import static com.example.xyzreader.R.id.photo;
  * activity presents a grid of items as cards.
  */
 public class ArticleListActivity extends AppCompatActivity implements
-        LoaderManager.LoaderCallbacks<Cursor> {
+        LoaderManager.LoaderCallbacks<Cursor>, SwipeRefreshLayout.OnRefreshListener {
 
     private static final String TAG = ArticleListActivity.class.getSimpleName();
 
@@ -72,6 +71,7 @@ public class ArticleListActivity extends AppCompatActivity implements
         int end = getResources().getDimensionPixelSize(R.dimen.indicator_end);
         mSwipeRefreshLayout.setProgressViewOffset(true, start, end);
         mSwipeRefreshLayout.setColorSchemeColors(colorPrimary, colorPrimaryLight, colorAccent);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
@@ -107,7 +107,6 @@ public class ArticleListActivity extends AppCompatActivity implements
         public void onReceive(Context context, Intent intent) {
             if (UpdaterService.BROADCAST_ACTION_STATE_CHANGE.equals(intent.getAction())) {
                 mIsRefreshing = intent.getBooleanExtra(UpdaterService.EXTRA_REFRESHING, false);
-                Timber.d("ArticleListActivity:onReceive: mIsRefreshing is %s", mIsRefreshing);
                 updateRefreshingUI();
             }
         }
@@ -138,6 +137,11 @@ public class ArticleListActivity extends AppCompatActivity implements
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         mRecyclerView.setAdapter(null);
+    }
+
+    @Override
+    public void onRefresh() {
+        refresh();
     }
 
 
@@ -217,10 +221,6 @@ public class ArticleListActivity extends AppCompatActivity implements
                             DateUtils.FORMAT_ABBREV_ALL).toString()
                             + " by "
                             + mCursor.getString(ArticleLoader.Query.AUTHOR));
-
-//            holder.photoView.setImageUrl(
-//                    mCursor.getString(ArticleLoader.Query.THUMB_URL),
-//                    ImageLoaderHelper.getInstance(ArticleListActivity.this).getImageLoader());
 
             Picasso.with(ArticleListActivity.this)
                     .load(mCursor.getString(ArticleLoader.Query.THUMB_URL))

@@ -102,8 +102,6 @@ public class ArticleDetailFragment extends Fragment implements
         if(getArguments().containsKey(ARG_VISIBLE_FRAGMENT_ID)){
             mStartId = getArguments().getLong(ARG_VISIBLE_FRAGMENT_ID);
         }
-        Timber.d("ArticleDetailFragment:onCreate: mPosition is %s", mPosition);
-        Timber.d("ArticleDetailFragment:onCreate: mItemId is %s", mItemId);
 
         // Toggle card mode
         mIsCard = getResources().getBoolean(R.bool.detail_is_card);
@@ -276,10 +274,6 @@ public class ArticleDetailFragment extends Fragment implements
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-
-
-
-
         if (!isAdded()) {
             if (cursor != null) {
                 cursor.close();
