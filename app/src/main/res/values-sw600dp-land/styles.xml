@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="AppTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
-        <item name="android:windowContentTransitions">true</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:windowReenterTransition">@transition/reenter</item>
 
     </style>
 
-    <style name="AppTheme.Detail" parent="@style/AppTheme">
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
-
+    <style name="AppTheme.Detail" parent="@style/Theme.AppCompat.Dialog">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
     </style>
 
 </resources>

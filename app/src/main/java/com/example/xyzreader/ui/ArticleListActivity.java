@@ -42,15 +42,13 @@ import static com.example.xyzreader.R.id.photo;
  * activity presents a grid of items as cards.
  */
 public class ArticleListActivity extends AppCompatActivity implements
-        LoaderManager.LoaderCallbacks<Cursor> {
+        LoaderManager.LoaderCallbacks<Cursor>, SwipeRefreshLayout.OnRefreshListener {
 
     private static final String TAG = ArticleListActivity.class.getSimpleName();
 
     private Toolbar mToolbar;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
-    private boolean mHoldForTransition;
-    private int mPosition;
 
     @BindColor(R.color.colorPrimary)
     int colorPrimary;
@@ -73,10 +71,9 @@ public class ArticleListActivity extends AppCompatActivity implements
         int end = getResources().getDimensionPixelSize(R.dimen.indicator_end);
         mSwipeRefreshLayout.setProgressViewOffset(true, start, end);
         mSwipeRefreshLayout.setColorSchemeColors(colorPrimary, colorPrimaryLight, colorAccent);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-
-        mHoldForTransition = getResources().getBoolean(R.bool.do_shared_transition);
 
         getLoaderManager().initLoader(0, null, this);
 
@@ -115,6 +112,7 @@ public class ArticleListActivity extends AppCompatActivity implements
         }
     };
 
+    // TODO:stop refreshing
     private void updateRefreshingUI() {
         mSwipeRefreshLayout.setRefreshing(mIsRefreshing);
     }
@@ -139,6 +137,11 @@ public class ArticleListActivity extends AppCompatActivity implements
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         mRecyclerView.setAdapter(null);
+    }
+
+    @Override
+    public void onRefresh() {
+        refresh();
     }
 
 
@@ -167,6 +170,7 @@ public class ArticleListActivity extends AppCompatActivity implements
 
                     Uri uri = ItemsContract.Items.buildItemUri(
                             getItemId(vh.getAdapterPosition()));
+
                     Intent intent = new Intent(Intent.ACTION_VIEW, uri);
 
                     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
@@ -196,8 +200,9 @@ public class ArticleListActivity extends AppCompatActivity implements
 
                         ActivityCompat.startActivity(
                                 ArticleListActivity.this, intent, optionsCompat.toBundle());
+                    } else {
+                        startActivity(intent);
                     }
-                    startActivity(intent);
                 }
             });
             return vh;
@@ -216,10 +221,6 @@ public class ArticleListActivity extends AppCompatActivity implements
                             DateUtils.FORMAT_ABBREV_ALL).toString()
                             + " by "
                             + mCursor.getString(ArticleLoader.Query.AUTHOR));
-
-//            holder.photoView.setImageUrl(
-//                    mCursor.getString(ArticleLoader.Query.THUMB_URL),
-//                    ImageLoaderHelper.getInstance(ArticleListActivity.this).getImageLoader());
 
             Picasso.with(ArticleListActivity.this)
                     .load(mCursor.getString(ArticleLoader.Query.THUMB_URL))
