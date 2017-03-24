@@ -10,9 +10,9 @@
     </style>
 
     <style name="AppTheme.Detail" parent="@style/Theme.AppCompat.Dialog">
+
         <item name="android:windowContentTransitions">true</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
 
     </style>
 

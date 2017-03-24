@@ -27,7 +27,6 @@
     <style name="AppTheme.Detail">
         <item name="android:windowContentOverlay">@null</item>
         <item name="windowActionBarOverlay">true</item>
-        <item name="colorPrimary">@android:color/transparent</item>
     </style>
 
     <style name="article_title">

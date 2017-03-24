@@ -3,10 +3,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="?attr/colorPrimary"
     android:id="@+id/coordinatar_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?attr/colorPrimary"
     android:fitsSystemWindows="true">
 
     <android.support.design.widget.AppBarLayout
@@ -38,6 +38,7 @@
                     android:scaleType="centerCrop"
                     app:layout_collapseMode="parallax"
                     tools:ignore="ContentDescription"/>
+
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -56,4 +57,16 @@
 
     <include layout="@layout/fragment_article_detail"/>
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/share_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="@dimen/fab_margin"
+        android:layout_marginEnd="@dimen/fab_margin"
+        android:layout_marginRight="@dimen/fab_margin"
+        android:contentDescription="@string/action_share"
+        android:elevation="@dimen/elevation_fab"
+        android:src="@drawable/ic_share"
+        app:fabSize="normal"/>
 </android.support.design.widget.CoordinatorLayout>

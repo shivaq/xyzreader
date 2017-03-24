@@ -1,72 +1,63 @@
-    <android.support.v4.widget.NestedScrollView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/scrollview"
+<android.support.v4.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollview"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <FrameLayout
         android:layout_width="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
-        <FrameLayout
+
+        <com.example.xyzreader.ui.MaxWidthLinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="@color/white"
+            android:elevation="2dp"
+            android:maxWidth="@dimen/detail_card_max_width"
+            android:orientation="vertical">
 
-
-            <com.example.xyzreader.ui.MaxWidthLinearLayout
+            <LinearLayout
+                android:id="@+id/meta_bar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:background="@color/white"
-                android:elevation="2dp"
-                android:maxWidth="@dimen/detail_card_max_width"
-                android:orientation="vertical">
-
-                <LinearLayout
-                    android:id="@+id/meta_bar"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
-                    android:layout_marginBottom="@dimen/detail_metabar_vert_padding"
-                    android:background="@color/colorPrimaryDark"
-                    android:orientation="vertical"
-                    android:paddingBottom="@dimen/detail_metabar_vert_padding"
-                    android:paddingTop="@dimen/detail_metabar_vert_padding">
-
-                    <TextView
-                        android:id="@+id/article_title"
-                        style="@style/article_title"
-                        tools:text="Miss Anders! I didn’t recognize you with your clothes on."/>
-
-                    <TextView
-                        android:id="@+id/article_byline"
-                        style="@style/article_byline"
-                        tools:text="2017/12/31 by James Bond"/>
-                </LinearLayout>
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="@dimen/detail_metabar_vert_padding"
+                android:background="@color/colorPrimaryDark"
+                android:orientation="vertical"
+                android:paddingBottom="@dimen/detail_metabar_vert_padding"
+                android:paddingTop="@dimen/detail_metabar_vert_padding">
 
                 <TextView
-                    android:id="@+id/article_body"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/key_line_2"
-                    android:layout_marginRight="@dimen/key_line_2"
-                    android:lineSpacingMultiplier="@fraction/detail_body_line_spacing_multiplier"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                    android:textColor="@color/text_primary"
-                    android:paddingBottom="80dp"
-                    android:textColorLink="@color/colorPrimary"
-                    tools:text="You cannot say 'no' to the people you love, not often. That's the secret. And then when you do, it has to sound like a 'yes'. Or you have to make them say 'no.' You have to take time and trouble."/>
+                    android:id="@+id/article_title"
+                    style="@style/article_title"
+                    tools:text="Miss Anders! I didn’t recognize you with your clothes on."/>
 
-            </com.example.xyzreader.ui.MaxWidthLinearLayout>
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/share_fab"
-                android:layout_width="wrap_content"
+                <TextView
+                    android:id="@+id/article_byline"
+                    style="@style/article_byline"
+                    tools:text="2017/12/31 by James Bond"/>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/article_body"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom|end"
-                android:layout_marginBottom="@dimen/fab_margin"
-                android:layout_marginRight="@dimen/fab_margin"
-                android:contentDescription="@string/action_share"
-                android:elevation="@dimen/elevation_fab"
-                android:src="@drawable/ic_share"
-                app:fabSize="normal"/>
-        </FrameLayout>
-    </android.support.v4.widget.NestedScrollView>
+                android:layout_marginLeft="@dimen/key_line_2"
+                android:layout_marginRight="@dimen/key_line_2"
+                android:lineSpacingMultiplier="@fraction/detail_body_line_spacing_multiplier"
+                android:paddingBottom="80dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textColor="@color/text_primary"
+                android:textColorLink="@color/colorPrimary"
+                tools:text="You cannot say 'no' to the people you love, not often. That's the secret. And then when you do, it has to sound like a 'yes'. Or you have to make them say 'no.' You have to take time and trouble."/>
+
+        </com.example.xyzreader.ui.MaxWidthLinearLayout>
+
+    </FrameLayout>
+</android.support.v4.widget.NestedScrollView>
+
