@@ -236,13 +236,13 @@ public class ArticleListActivity extends AppCompatActivity implements
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public DynamicHeightNetworkImageView photoView;
+        public DynamicHeightImageView photoView;
         public TextView titleView;
         public TextView subtitleView;
 
         public ViewHolder(View view) {
             super(view);
-            photoView = (DynamicHeightNetworkImageView) view.findViewById(photo);
+            photoView = (DynamicHeightImageView) view.findViewById(photo);
             titleView = (TextView) view.findViewById(R.id.article_title);
             subtitleView = (TextView) view.findViewById(R.id.article_byline);
         }
