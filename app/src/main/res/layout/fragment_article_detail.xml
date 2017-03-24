@@ -57,16 +57,6 @@
                     tools:text="You cannot say 'no' to the people you love, not often. That's the secret. And then when you do, it has to sound like a 'yes'. Or you have to make them say 'no.' You have to take time and trouble."/>
 
             </com.example.xyzreader.ui.MaxWidthLinearLayout>
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/share_fab"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|end"
-                android:layout_marginBottom="@dimen/fab_margin"
-                android:layout_marginRight="@dimen/fab_margin"
-                android:contentDescription="@string/action_share"
-                android:elevation="@dimen/elevation_fab"
-                android:src="@drawable/ic_share"
-                app:fabSize="normal"/>
+
         </FrameLayout>
     </android.support.v4.widget.NestedScrollView>
