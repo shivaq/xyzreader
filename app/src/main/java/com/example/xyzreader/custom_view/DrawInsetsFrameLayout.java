@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.xyzreader.ui;
+package com.example.xyzreader.custom_view;
 
 import android.content.Context;
 import android.content.res.TypedArray;

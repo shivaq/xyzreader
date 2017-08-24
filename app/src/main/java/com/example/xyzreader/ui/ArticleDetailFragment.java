@@ -25,6 +25,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.xyzreader.R;
+import com.example.xyzreader.custom_view.DrawInsetsFrameLayout;
+import com.example.xyzreader.custom_view.ObservableScrollView;
 import com.example.xyzreader.data.ArticleLoader;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -50,7 +52,7 @@ public class ArticleDetailFragment extends Fragment implements
     private View mRootView;
     private int mMutedColor = 0xFF333333;
     private ObservableScrollView mScrollView;
-    private DrawInsetsFrameLayout mDrawInsetsFrameLayout;
+    public DrawInsetsFrameLayout mDrawInsetsFrameLayout;
     private ColorDrawable mStatusBarColorDrawable;
 
     private int mTopInset;

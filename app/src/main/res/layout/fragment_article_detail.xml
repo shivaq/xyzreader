@@ -12,7 +12,7 @@
         android:layout_height="wrap_content">
 
 
-        <com.example.xyzreader.ui.MaxWidthLinearLayout
+        <com.example.xyzreader.custom_view.MaxWidthLinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -56,7 +56,7 @@
                 android:textColorLink="@color/colorPrimary"
                 tools:text="You cannot say 'no' to the people you love, not often. That's the secret. And then when you do, it has to sound like a 'yes'. Or you have to make them say 'no.' You have to take time and trouble."/>
 
-        </com.example.xyzreader.ui.MaxWidthLinearLayout>
+        </com.example.xyzreader.custom_view.MaxWidthLinearLayout>
 
     </FrameLayout>
 </android.support.v4.widget.NestedScrollView>

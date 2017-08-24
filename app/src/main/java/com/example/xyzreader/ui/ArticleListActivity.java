@@ -1,5 +1,7 @@
 package com.example.xyzreader.ui;
 
+import static com.example.xyzreader.R.id.photo;
+
 import android.app.LoaderManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -23,17 +25,14 @@ import android.text.format.DateUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
+import butterknife.BindColor;
+import butterknife.ButterKnife;
 import com.example.xyzreader.R;
+import com.example.xyzreader.custom_view.DynamicHeightImageView;
 import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.data.ItemsContract;
 import com.example.xyzreader.data.UpdaterService;
 import com.squareup.picasso.Picasso;
-
-import butterknife.BindColor;
-import butterknife.ButterKnife;
-
-import static com.example.xyzreader.R.id.photo;
 
 /**
  * An activity representing a list of Articles. This activity has different presentations for

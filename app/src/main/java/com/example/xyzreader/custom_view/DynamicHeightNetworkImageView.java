@@ -1,21 +1,21 @@
-package com.example.xyzreader.ui;
+package com.example.xyzreader.custom_view;
 
 import android.content.Context;
 import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 
-public class DynamicHeightImageView extends AppCompatImageView {
+public class DynamicHeightNetworkImageView extends AppCompatImageView {
     private float mAspectRatio = 1.5f;
 
-    public DynamicHeightImageView(Context context) {
+    public DynamicHeightNetworkImageView(Context context) {
         super(context);
     }
 
-    public DynamicHeightImageView(Context context, AttributeSet attrs) {
+    public DynamicHeightNetworkImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public DynamicHeightImageView(Context context, AttributeSet attrs, int defStyle) {
+    public DynamicHeightNetworkImageView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 
